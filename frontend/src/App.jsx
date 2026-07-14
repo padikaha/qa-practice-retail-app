@@ -2,10 +2,12 @@ import { useState } from 'react'
 import './App.css'
 import SearchBar from './components/SearchBar.jsx'
 import ProductList from './components/ProductList.jsx'
+import ProductDetails from './components/ProductDetails.jsx'
 import { products } from './data/products.js'
 
 function App() {
   const [searchText, setSearchText] = useState('')
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
   const normalizedSearchText = searchText.trim().toLowerCase()
   const filteredProducts = normalizedSearchText
@@ -23,10 +25,18 @@ function App() {
 
       <SearchBar searchText={searchText} onSearchChange={setSearchText} />
 
-      <section className="products-section" aria-labelledby="products-heading">
-        <h2 id="products-heading">Products</h2>
-        <ProductList products={filteredProducts} />
-      </section>
+      <div className="catalog-layout">
+        <section className="products-section" aria-labelledby="products-heading">
+          <h2 id="products-heading">Products</h2>
+          <ProductList
+            products={filteredProducts}
+            selectedProductId={selectedProduct?.id}
+            onProductSelect={setSelectedProduct}
+          />
+        </section>
+
+        <ProductDetails selectedProduct={selectedProduct} />
+      </div>
     </main>
   )
 }
