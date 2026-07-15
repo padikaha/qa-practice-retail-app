@@ -1,4 +1,4 @@
-function ProductCard({ product, isSelected, onSelect }) {
+function ProductCard({ product, isSelected, onSelect, onAddToCart }) {
   const statusClassName = product.inStock
     ? 'product-card__status product-card__status--in-stock'
     : 'product-card__status product-card__status--out-of-stock'
@@ -20,6 +20,17 @@ function ProductCard({ product, isSelected, onSelect }) {
       <h3>{product.name}</h3>
       <p className="product-card__price">{product.price}</p>
       <p className={statusClassName}>{product.availability}</p>
+      <button
+        type="button"
+        className="product-card__cart-button"
+        disabled={!product.inStock}
+        onClick={(event) => {
+          event.stopPropagation()
+          onAddToCart(product)
+        }}
+      >
+        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+      </button>
     </article>
   )
 }
