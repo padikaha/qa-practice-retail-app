@@ -1,7 +1,7 @@
 function ProductDetails({ selectedProduct }) {
   if (!selectedProduct) {
     return (
-      <aside className="product-details">
+      <aside className="product-details product-details--empty">
         <p className="product-details__empty">
           Select a product to view product details.
         </p>

@@ -1,6 +1,11 @@
 import ProductCard from './ProductCard.jsx'
 
-function ProductList({ products, selectedProductId, onProductSelect }) {
+function ProductList({
+  products,
+  selectedProductId,
+  onProductSelect,
+  onAddToCart,
+}) {
   if (products.length === 0) {
     return <p className="no-products">No products found.</p>
   }
@@ -13,6 +18,7 @@ function ProductList({ products, selectedProductId, onProductSelect }) {
           product={product}
           isSelected={product.id === selectedProductId}
           onSelect={onProductSelect}
+          onAddToCart={onAddToCart}
         />
       ))}
     </div>
