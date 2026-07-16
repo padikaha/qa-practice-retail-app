@@ -7,6 +7,7 @@ function ShoppingCart({
   onIncreaseQuantity,
   onDecreaseQuantity,
   onRemoveItem,
+  onCheckout,
 }) {
   return (
     <section className="shopping-cart" aria-labelledby="cart-heading">
@@ -32,6 +33,14 @@ function ShoppingCart({
       )}
 
       <p className="shopping-cart__subtotal">Cart subtotal: ${subtotal.toFixed(2)}</p>
+      <button
+        type="button"
+        className="shopping-cart__checkout-button"
+        disabled={cartItems.length === 0}
+        onClick={onCheckout}
+      >
+        Checkout
+      </button>
     </section>
   )
 }

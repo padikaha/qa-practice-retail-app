@@ -4,12 +4,17 @@ import SearchBar from './components/SearchBar.jsx'
 import ProductList from './components/ProductList.jsx'
 import ProductDetails from './components/ProductDetails.jsx'
 import ShoppingCart from './components/ShoppingCart.jsx'
+import CheckoutForm from './components/CheckoutForm.jsx'
+import OrderSummary from './components/OrderSummary.jsx'
+import OrderConfirmation from './components/OrderConfirmation.jsx'
 import { products } from './data/products.js'
 
 function App() {
   const [searchText, setSearchText] = useState('')
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [cartItems, setCartItems] = useState([])
+  const [currentView, setCurrentView] = useState('catalog')
+  const [orderConfirmation, setOrderConfirmation] = useState(null)
 
   const normalizedSearchText = searchText.trim().toLowerCase()
   const filteredProducts = normalizedSearchText
@@ -73,6 +78,73 @@ function App() {
     )
   }
 
+  function handleStartCheckout() {
+    if (cartItems.length > 0) {
+      setCurrentView('checkout')
+    }
+  }
+
+  function handleCancelCheckout() {
+    setCurrentView('catalog')
+  }
+
+  function handlePlaceOrder(customerInfo) {
+    const orderNumber = `GB-${Date.now()}`
+
+    setOrderConfirmation({
+      orderNumber,
+      customerName: customerInfo.fullName,
+      totalItemCount,
+      subtotal,
+    })
+    setCartItems([])
+    setCurrentView('confirmation')
+  }
+
+  function handleContinueShopping() {
+    setOrderConfirmation(null)
+    setCurrentView('catalog')
+  }
+
+  if (currentView === 'checkout') {
+    return (
+      <main className="app">
+        <header className="page-header">
+          <h1>GreenBasket</h1>
+          <p>QA Practice Retail Application</p>
+        </header>
+
+        <div className="checkout-layout">
+          <CheckoutForm
+            onPlaceOrder={handlePlaceOrder}
+            onCancelCheckout={handleCancelCheckout}
+          />
+          <OrderSummary
+            cartItems={cartItems}
+            totalItemCount={totalItemCount}
+            subtotal={subtotal}
+          />
+        </div>
+      </main>
+    )
+  }
+
+  if (currentView === 'confirmation' && orderConfirmation) {
+    return (
+      <main className="app">
+        <header className="page-header">
+          <h1>GreenBasket</h1>
+          <p>QA Practice Retail Application</p>
+        </header>
+
+        <OrderConfirmation
+          order={orderConfirmation}
+          onContinueShopping={handleContinueShopping}
+        />
+      </main>
+    )
+  }
+
   return (
     <main className="app">
       <header className="page-header">
@@ -111,6 +183,7 @@ function App() {
             onIncreaseQuantity={handleIncreaseQuantity}
             onDecreaseQuantity={handleDecreaseQuantity}
             onRemoveItem={handleRemoveItem}
+            onCheckout={handleStartCheckout}
           />
         </div>
       </div>
