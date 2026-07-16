@@ -11,7 +11,7 @@ function OrderConfirmation({ order, onContinueShopping }) {
         </div>
         <div>
           <dt>Customer Name</dt>
-          <dd>{order.customerName}</dd>
+          <dd>{order.customer.fullName}</dd>
         </div>
         <div>
           <dt>Total Item Count</dt>

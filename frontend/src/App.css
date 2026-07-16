@@ -6,6 +6,10 @@
 }
 
 .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
   text-align: center;
   margin-bottom: 3rem;
 }
@@ -22,6 +26,12 @@
   color: #334155;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.page-header__history-button {
+  width: auto;
+  min-width: 10rem;
+  margin-top: 0;
 }
 
 .search-bar {
@@ -576,11 +586,113 @@
   color: #0f172a;
 }
 
+.order-history {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.order-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-history__header h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.75rem;
+}
+
+.order-history__header .secondary-button {
+  width: auto;
+  margin-top: 0;
+}
+
+.order-history__empty,
+.order-history-item {
+  padding: 1.5rem;
+  border: 1px solid #dbe4dc;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.order-history__empty {
+  margin: 0;
+  color: #334155;
+  font-size: 1.125rem;
+}
+
+.order-history__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-history-item__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+}
+
+.order-history-item h3,
+.order-history-item h4 {
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.order-history-item p {
+  margin: 0.25rem 0 0;
+  color: #334155;
+}
+
+.order-history-item__toggle {
+  width: auto;
+}
+
+.order-history-item__details {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.order-history-item__items {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-history-item__items li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.order-history-item__subtotal {
+  margin-top: 1rem;
+  font-weight: 700;
+}
+
 @media (max-width: 820px) {
   .checkout-layout,
   .checkout-form__row,
   .checkout-form__actions,
-  .order-summary__item {
+  .order-summary__item,
+  .order-history-item__summary,
+  .order-history-item__items li {
     grid-template-columns: 1fr;
+  }
+
+  .page-header,
+  .order-history__header {
+    flex-direction: column;
   }
 }
