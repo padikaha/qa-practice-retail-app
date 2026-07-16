@@ -7,6 +7,7 @@ import ShoppingCart from './components/ShoppingCart.jsx'
 import CheckoutForm from './components/CheckoutForm.jsx'
 import OrderSummary from './components/OrderSummary.jsx'
 import OrderConfirmation from './components/OrderConfirmation.jsx'
+import OrderHistory from './components/OrderHistory.jsx'
 import { products } from './data/products.js'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
   const [cartItems, setCartItems] = useState([])
   const [currentView, setCurrentView] = useState('catalog')
   const [orderConfirmation, setOrderConfirmation] = useState(null)
+  const [orders, setOrders] = useState([])
 
   const normalizedSearchText = searchText.trim().toLowerCase()
   const filteredProducts = normalizedSearchText
@@ -89,14 +91,45 @@ function App() {
   }
 
   function handlePlaceOrder(customerInfo) {
-    const orderNumber = `GB-${Date.now()}`
+    const orderNumber = `GB-${Date.now()}-${orders.length + 1}`
+    const orderDateTime = new Date().toLocaleString()
+    const orderItems = cartItems.map((item) => {
+      const unitPrice = Number(item.price.replace('$', ''))
 
-    setOrderConfirmation({
-      orderNumber,
-      customerName: customerInfo.fullName,
-      totalItemCount,
-      subtotal,
+      return {
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        unitPrice,
+        lineTotal: unitPrice * item.quantity,
+      }
     })
+    const orderSubtotal = orderItems.reduce(
+      (total, item) => total + item.lineTotal,
+      0,
+    )
+    const completedOrder = {
+      orderNumber,
+      orderDateTime,
+      customer: {
+        fullName: customerInfo.fullName,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+      },
+      deliveryAddress: {
+        streetAddress: customerInfo.streetAddress,
+        city: customerInfo.city,
+        state: customerInfo.state,
+        zipCode: customerInfo.zipCode,
+      },
+      items: orderItems,
+      totalItemCount,
+      subtotal: orderSubtotal,
+      status: 'Confirmed',
+    }
+
+    setOrders((currentOrders) => [completedOrder, ...currentOrders])
+    setOrderConfirmation(completedOrder)
     setCartItems([])
     setCurrentView('confirmation')
   }
@@ -106,13 +139,39 @@ function App() {
     setCurrentView('catalog')
   }
 
+  function handleViewOrderHistory() {
+    setCurrentView('history')
+  }
+
+  function handleReturnToCatalog() {
+    setCurrentView('catalog')
+  }
+
+  function renderHeader(showOrderHistoryButton = true) {
+    return (
+      <header className="page-header">
+        <div>
+          <h1>GreenBasket</h1>
+          <p>QA Practice Retail Application</p>
+        </div>
+
+        {showOrderHistoryButton && (
+          <button
+            type="button"
+            className="secondary-button page-header__history-button"
+            onClick={handleViewOrderHistory}
+          >
+            Order History
+          </button>
+        )}
+      </header>
+    )
+  }
+
   if (currentView === 'checkout') {
     return (
       <main className="app">
-        <header className="page-header">
-          <h1>GreenBasket</h1>
-          <p>QA Practice Retail Application</p>
-        </header>
+        {renderHeader()}
 
         <div className="checkout-layout">
           <CheckoutForm
@@ -132,10 +191,7 @@ function App() {
   if (currentView === 'confirmation' && orderConfirmation) {
     return (
       <main className="app">
-        <header className="page-header">
-          <h1>GreenBasket</h1>
-          <p>QA Practice Retail Application</p>
-        </header>
+        {renderHeader()}
 
         <OrderConfirmation
           order={orderConfirmation}
@@ -145,12 +201,19 @@ function App() {
     )
   }
 
+  if (currentView === 'history') {
+    return (
+      <main className="app">
+        {renderHeader(false)}
+
+        <OrderHistory orders={orders} onReturnToCatalog={handleReturnToCatalog} />
+      </main>
+    )
+  }
+
   return (
     <main className="app">
-      <header className="page-header">
-        <h1>GreenBasket</h1>
-        <p>QA Practice Retail Application</p>
-      </header>
+      {renderHeader()}
 
       <SearchBar searchText={searchText} onSearchChange={setSearchText} />
 
