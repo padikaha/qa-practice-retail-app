@@ -9,7 +9,9 @@ function ProductDetails({ selectedProduct }) {
     )
   }
 
-  const statusClassName = selectedProduct.inStock
+  const isInStock = selectedProduct.inventory > 0
+  const availability = isInStock ? 'In Stock' : 'Out of Stock'
+  const statusClassName = isInStock
     ? 'product-details__status product-details__status--in-stock'
     : 'product-details__status product-details__status--out-of-stock'
 
@@ -36,8 +38,12 @@ function ProductDetails({ selectedProduct }) {
         <div>
           <dt>Stock Status</dt>
           <dd>
-            <span className={statusClassName}>{selectedProduct.availability}</span>
+            <span className={statusClassName}>{availability}</span>
           </dd>
+        </div>
+        <div>
+          <dt>Available Quantity</dt>
+          <dd>{selectedProduct.inventory}</dd>
         </div>
         <div>
           <dt>Description</dt>

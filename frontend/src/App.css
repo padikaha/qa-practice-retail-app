@@ -135,6 +135,12 @@
   font-weight: 600;
 }
 
+.product-card__quantity {
+  margin: 0.75rem 0 0;
+  color: #334155;
+  font-weight: 600;
+}
+
 .product-card__status {
   display: inline-block;
   margin: 0;
@@ -419,8 +425,23 @@
   outline: 3px solid #bbf7d0;
 }
 
+.cart-item__actions button:disabled {
+  border-color: #cbd5e1;
+  background: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
 .cart-item__remove {
   color: #991b1b;
+}
+
+.cart-item__message {
+  flex-basis: 100%;
+  margin: 0;
+  color: #991b1b;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 @media (max-width: 640px) {
