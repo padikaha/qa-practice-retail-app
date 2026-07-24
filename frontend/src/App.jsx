@@ -8,12 +8,14 @@ import CheckoutForm from './components/CheckoutForm.jsx'
 import OrderSummary from './components/OrderSummary.jsx'
 import OrderConfirmation from './components/OrderConfirmation.jsx'
 import OrderHistory from './components/OrderHistory.jsx'
-import { products } from './data/products.js'
+import { products as initialProducts } from './data/products.js'
 
 function App() {
+  const [products, setProducts] = useState(initialProducts)
   const [searchText, setSearchText] = useState('')
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [cartItems, setCartItems] = useState([])
+  const [cartMessageByProductId, setCartMessageByProductId] = useState({})
   const [currentView, setCurrentView] = useState('catalog')
   const [orderConfirmation, setOrderConfirmation] = useState(null)
   const [orders, setOrders] = useState([])
@@ -33,14 +35,58 @@ function App() {
 
     return total + unitPrice * item.quantity
   }, 0)
+  // Product details are looked up from live product state so inventory stays fresh.
+  const selectedProductDetails = selectedProduct
+    ? products.find((product) => product.id === selectedProduct.id) ?? null
+    : null
+
+  function getCartQuantity(productId, items = cartItems) {
+    return items.find((item) => item.id === productId)?.quantity ?? 0
+  }
+
+  function showMaximumQuantityMessage(productId) {
+    setCartMessageByProductId((currentMessages) => ({
+      ...currentMessages,
+      [productId]: 'Maximum available quantity reached.',
+    }))
+  }
+
+  function clearCartMessage(productId) {
+    setCartMessageByProductId((currentMessages) => {
+      if (!currentMessages[productId]) {
+        return currentMessages
+      }
+
+      const updatedMessages = { ...currentMessages }
+      delete updatedMessages[productId]
+
+      return updatedMessages
+    })
+  }
 
   function handleAddToCart(product) {
-    if (!product.inStock) {
+    const currentProduct = products.find((item) => item.id === product.id)
+    const currentCartQuantity = getCartQuantity(product.id)
+
+    if (!currentProduct || currentProduct.inventory <= 0) {
       return
     }
 
+    if (currentCartQuantity >= currentProduct.inventory) {
+      showMaximumQuantityMessage(product.id)
+
+      return
+    }
+
+    clearCartMessage(product.id)
+
     setCartItems((currentItems) => {
       const existingItem = currentItems.find((item) => item.id === product.id)
+      const latestCartQuantity = existingItem?.quantity ?? 0
+
+      if (latestCartQuantity >= currentProduct.inventory) {
+        return currentItems
+      }
 
       if (existingItem) {
         return currentItems.map((item) =>
@@ -50,19 +96,40 @@ function App() {
         )
       }
 
-      return [...currentItems, { ...product, quantity: 1 }]
+      return [...currentItems, { ...currentProduct, quantity: 1 }]
     })
   }
 
   function handleIncreaseQuantity(productId) {
+    const currentProduct = products.find((product) => product.id === productId)
+    const currentQuantity = getCartQuantity(productId)
+
+    if (!currentProduct) {
+      return
+    }
+
+    if (currentQuantity >= currentProduct.inventory) {
+      showMaximumQuantityMessage(productId)
+
+      return
+    }
+
+    clearCartMessage(productId)
+
     setCartItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === productId ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
+      currentItems.map((item) => {
+        if (item.id !== productId || item.quantity >= currentProduct.inventory) {
+          return item
+        }
+
+        return { ...item, quantity: item.quantity + 1 }
+      }),
     )
   }
 
   function handleDecreaseQuantity(productId) {
+    clearCartMessage(productId)
+
     setCartItems((currentItems) =>
       currentItems
         .map((item) =>
@@ -75,6 +142,8 @@ function App() {
   }
 
   function handleRemoveItem(productId) {
+    clearCartMessage(productId)
+
     setCartItems((currentItems) =>
       currentItems.filter((item) => item.id !== productId),
     )
@@ -91,6 +160,16 @@ function App() {
   }
 
   function handlePlaceOrder(customerInfo) {
+    const hasUnavailableCartQuantity = cartItems.some((item) => {
+      const currentProduct = products.find((product) => product.id === item.id)
+
+      return !currentProduct || item.quantity > currentProduct.inventory
+    })
+
+    if (hasUnavailableCartQuantity) {
+      return
+    }
+
     const orderNumber = `GB-${Date.now()}-${orders.length + 1}`
     const orderDateTime = new Date().toLocaleString()
     const orderItems = cartItems.map((item) => {
@@ -108,6 +187,7 @@ function App() {
       (total, item) => total + item.lineTotal,
       0,
     )
+    // The order stores purchased values before live inventory changes.
     const completedOrder = {
       orderNumber,
       orderDateTime,
@@ -128,9 +208,24 @@ function App() {
       status: 'Confirmed',
     }
 
+    setProducts((currentProducts) =>
+      currentProducts.map((product) => {
+        const orderedItem = cartItems.find((item) => item.id === product.id)
+
+        if (!orderedItem) {
+          return product
+        }
+
+        return {
+          ...product,
+          inventory: Math.max(product.inventory - orderedItem.quantity, 0),
+        }
+      }),
+    )
     setOrders((currentOrders) => [completedOrder, ...currentOrders])
     setOrderConfirmation(completedOrder)
     setCartItems([])
+    setCartMessageByProductId({})
     setCurrentView('confirmation')
   }
 
@@ -219,7 +314,7 @@ function App() {
 
       {!selectedProduct && (
         <div className="empty-details-placement">
-          <ProductDetails selectedProduct={selectedProduct} />
+          <ProductDetails selectedProduct={selectedProductDetails} />
         </div>
       )}
 
@@ -232,10 +327,13 @@ function App() {
               selectedProductId={selectedProduct?.id}
               onProductSelect={setSelectedProduct}
               onAddToCart={handleAddToCart}
+              cartItems={cartItems}
             />
           </section>
 
-          {selectedProduct && <ProductDetails selectedProduct={selectedProduct} />}
+          {selectedProduct && (
+            <ProductDetails selectedProduct={selectedProductDetails} />
+          )}
         </div>
 
         <div className="cart-panel">
@@ -247,6 +345,7 @@ function App() {
             onDecreaseQuantity={handleDecreaseQuantity}
             onRemoveItem={handleRemoveItem}
             onCheckout={handleStartCheckout}
+            cartMessageByProductId={cartMessageByProductId}
           />
         </div>
       </div>

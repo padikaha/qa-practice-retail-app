@@ -5,6 +5,7 @@ function ProductList({
   selectedProductId,
   onProductSelect,
   onAddToCart,
+  cartItems,
 }) {
   if (products.length === 0) {
     return <p className="no-products">No products found.</p>
@@ -19,6 +20,9 @@ function ProductList({
           isSelected={product.id === selectedProductId}
           onSelect={onProductSelect}
           onAddToCart={onAddToCart}
+          cartQuantity={
+            cartItems.find((item) => item.id === product.id)?.quantity ?? 0
+          }
         />
       ))}
     </div>

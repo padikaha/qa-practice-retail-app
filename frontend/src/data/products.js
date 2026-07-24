@@ -5,8 +5,7 @@ export const products = [
     price: '$2.99',
     category: 'Produce',
     sku: 'GB-APL-001',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 20,
     description: 'Fresh organic apples sold by the pound for everyday snacking and baking.',
   },
   {
@@ -15,8 +14,7 @@ export const products = [
     price: '$1.49',
     category: 'Produce',
     sku: 'GB-BAN-002',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 15,
     description: 'Ripe bananas sold by the bunch, suitable for breakfast, snacks, and smoothies.',
   },
   {
@@ -25,8 +23,7 @@ export const products = [
     price: '$3.99',
     category: 'Dairy',
     sku: 'GB-MLK-003',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 8,
     description: 'One gallon of whole milk for cooking, cereal, coffee, and daily household use.',
   },
   {
@@ -35,8 +32,7 @@ export const products = [
     price: '$2.49',
     category: 'Bakery',
     sku: 'GB-BRD-004',
-    availability: 'Out of Stock',
-    inStock: false,
+    inventory: 0,
     description: 'Soft sliced wheat bread for sandwiches and toast, currently unavailable.',
   },
   {
@@ -45,8 +41,7 @@ export const products = [
     price: '$4.99',
     category: 'Dairy',
     sku: 'GB-EGG-005',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 10,
     description: 'A dozen free-range eggs for breakfast meals, baking, and cooking.',
   },
   {
@@ -55,8 +50,7 @@ export const products = [
     price: '$8.99',
     category: 'Beverages',
     sku: 'GB-COF-006',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 6,
     description: 'Medium roast ground coffee for a smooth daily brew at home.',
   },
   {
@@ -65,8 +59,7 @@ export const products = [
     price: '$5.49',
     category: 'Dairy',
     sku: 'GB-YOG-007',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 9,
     description: 'Creamy Greek yogurt for breakfast, snacks, and smoothies.',
   },
   {
@@ -75,8 +68,7 @@ export const products = [
     price: '$6.99',
     category: 'Pantry',
     sku: 'GB-RIC-008',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 7,
     description: 'Whole grain brown rice for simple meals and weekly meal prep.',
   },
   {
@@ -85,8 +77,7 @@ export const products = [
     price: '$4.29',
     category: 'Beverages',
     sku: 'GB-JUI-009',
-    availability: 'In Stock',
-    inStock: true,
+    inventory: 5,
     description: 'Refreshing orange juice for breakfast and everyday drinks.',
   },
   {
@@ -95,8 +86,7 @@ export const products = [
     price: '$7.99',
     category: 'Pantry',
     sku: 'GB-ALM-010',
-    availability: 'Out of Stock',
-    inStock: false,
+    inventory: 0,
     description: 'Smooth almond butter for toast, snacks, and baking, currently unavailable.',
   },
 ]

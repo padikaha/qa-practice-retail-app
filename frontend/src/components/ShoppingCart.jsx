@@ -8,6 +8,7 @@ function ShoppingCart({
   onDecreaseQuantity,
   onRemoveItem,
   onCheckout,
+  cartMessageByProductId,
 }) {
   return (
     <section className="shopping-cart" aria-labelledby="cart-heading">
@@ -27,6 +28,7 @@ function ShoppingCart({
               onIncrease={onIncreaseQuantity}
               onDecrease={onDecreaseQuantity}
               onRemove={onRemoveItem}
+              message={cartMessageByProductId[item.id]}
             />
           ))}
         </ul>

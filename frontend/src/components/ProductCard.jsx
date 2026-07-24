@@ -1,5 +1,8 @@
-function ProductCard({ product, isSelected, onSelect, onAddToCart }) {
-  const statusClassName = product.inStock
+function ProductCard({ product, isSelected, onSelect, onAddToCart, cartQuantity }) {
+  const isInStock = product.inventory > 0
+  const hasReachedMaximumQuantity = cartQuantity >= product.inventory
+  const availability = isInStock ? 'In Stock' : 'Out of Stock'
+  const statusClassName = isInStock
     ? 'product-card__status product-card__status--in-stock'
     : 'product-card__status product-card__status--out-of-stock'
   const cardClassName = isSelected
@@ -19,17 +22,20 @@ function ProductCard({ product, isSelected, onSelect, onAddToCart }) {
     >
       <h3>{product.name}</h3>
       <p className="product-card__price">{product.price}</p>
-      <p className={statusClassName}>{product.availability}</p>
+      <p className={statusClassName}>{availability}</p>
+      <p className="product-card__quantity">
+        Available quantity: {product.inventory}
+      </p>
       <button
         type="button"
         className="product-card__cart-button"
-        disabled={!product.inStock}
+        disabled={!isInStock || hasReachedMaximumQuantity}
         onClick={(event) => {
           event.stopPropagation()
           onAddToCart(product)
         }}
       >
-        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+        {isInStock ? 'Add to Cart' : 'Out of Stock'}
       </button>
     </article>
   )
